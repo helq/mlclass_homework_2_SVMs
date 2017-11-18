@@ -59,9 +59,20 @@ grids_params = [
 #    },
     {
         'preprocessing': 'no-preprocessing',
-        'kernel_params': {'max_iter': 1000000},#, 'verbose': True},
+        'name': "news",
+        'kernel_params': {'max_iter': 1400000},#, 'verbose': True},
         'axes': {
             'lambda': [.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.],
+            'nu': np.arange(.02,.8,.02)
+        },
+        'xs_all': np.arange(n).reshape( (n,1) )
+    },
+    {
+        'preprocessing': 'tokenized_leximized',
+        'name': "news_as_intlists",
+        'kernel_params': {'max_iter': 1400000},#, 'verbose': True},
+        'axes': {
+            'lambda': [.5,.55,.6,.65,.7,.75,.8,.85,.9,.95,1.],
             'nu': np.arange(.02,.8,.02)
         },
         'xs_all': np.arange(n).reshape( (n,1) )
@@ -71,16 +82,16 @@ grids_params = [
 def cross_validate_with_params( params ):
     """Uses global variables: xs_train, ys_train, axes_keys"""
 
-    axes_coord, kernel_params = params
+    axes_coord, name, kernel_params = params
 
     if 'lambda' in kernel_params:
         lbda = kernel_params['lambda']
         del kernel_params['lambda']
-        mat = np.load( "./news-ssk_{}.npy".format(lbda) )
+        mat = np.load( "./{}-ssk_{}.npy".format(name, lbda) )
         kernel = ssk_from_indices_from_mat(mat)
 
     clf = svm.NuSVC(kernel=kernel, **kernel_params)
-    scores = cross_validate(clf, xs_train, ys_train, cv=5, max_iter=1400000)#, n_jobs=-1)
+    scores = cross_validate(clf, xs_train, ys_train, cv=5)#, n_jobs=-1)
 
     clfmdl = clf.fit(xs_train, ys_train)
 
@@ -129,7 +140,7 @@ if __name__ == '__main__':
                 kernel_params[axes_keys[i]] = axis_value
 
             axes_coord = tuple(reversed(axes_coord))
-            kernels_params.append( (axes_coord, kernel_params) )
+            kernels_params.append( (axes_coord, params['name'], kernel_params) )
 
             #cross_results[axes_coord] = None # initializing value to prevent weird behaivor when running the code in parallel
             #print(axes_coord)
