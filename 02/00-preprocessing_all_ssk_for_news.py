@@ -168,19 +168,48 @@ if __name__ == '__main__':
         save_string_list("news_subset.txt", news)
         save_string_list("labels_subset.txt", labels)
 
+    import nltk
+    import array
+    #nltk.download("punkt")
+    #nltk.download("wordnet")
+    #not yet nltk.download("averaged_perceptron_tagger")
+    #not yet nltk.download('universal_tagset')
+    st = nltk.stem.WordNetLemmatizer()
+    news_in_words = [[ st.lemmatize(w) for w in nltk.word_tokenize(new) ] for new in news]
+
+    freq = {}
+    word_to_int = {}
+    i = 0
+    for sentence in news_in_words:
+        for word in sentence:
+            if word in freq:
+                freq[word] += 1
+            else:
+                freq[word] = 1
+                word_to_int[word] = i
+                i += 1
+
+    news_as_intlists = [array.array('l', [word_to_int[word] for word in sentence]) for sentence in news_in_words]
+    #print( news_as_intlists[20] )
+    #print( news[20] )
+
     #gramm_ssk = GrammMatrixCreator(news, partition_size, name="news", lbda=.8, into_rows=into_rows)
     #gramm_ssk.computeGramm()
     #gramm_ssk.save_ssk_mat()
 
-    def computeNSaveSSK(lbda):
-        gramm_ssk = GrammMatrixCreator(news, partition_size, name="news", lbda=lbda, into_rows=into_rows)
+    def computeNSaveSSK(params):
+        lbda, news_list, name = params
+        gramm_ssk = GrammMatrixCreator(news_list, partition_size, name=name, lbda=lbda, into_rows=into_rows)
         gramm_ssk.computeGramm()
 
-    pool = Pool(processes=10)
-    pool.map( computeNSaveSSK, [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.0] )
+    to_process  = [(lbda, news,             "news")             for lbda in [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.0]]
+    to_process += [(lbda, news_as_intlists, "news_as_intlists") for lbda in [.5,.55,.6,.65,.7,.75,.8,.85,.9,.95,1.]]
 
-    for lbda in [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.0]:
-        gramm_ssk = GrammMatrixCreator(news, partition_size, name="news", lbda=lbda, into_rows=into_rows)
+    pool = Pool(processes=10)
+    pool.map( computeNSaveSSK, to_process )
+
+    for lbda, news_list, name in to_process:
+        gramm_ssk = GrammMatrixCreator(news_list, partition_size, name=name, lbda=lbda, into_rows=into_rows)
         gramm_ssk.save_ssk_mat()
 
     print("Preprocessing finished")
