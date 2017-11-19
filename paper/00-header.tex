@@ -14,3 +14,9 @@
 %\setmainfont{Noto Serif}
 
 \newcommand{\inlinetodo}[1]{\todo[inline,size=\normalsize]{#1}}
+
+\makeatletter
+\providecommand\@dotsep{5}
+\def\listtodoname{List of Todos}
+\def\listoftodos{\@starttoc{tdo}\listtodoname}
+\makeatother
