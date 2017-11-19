@@ -72,7 +72,7 @@ grids_params = [
         'name': "news_as_intlists",
         'kernel_params': {'max_iter': 1400000},#, 'verbose': True},
         'axes': {
-            'lambda': [.5,.55,.6,.65,.7,.75,.8,.85,.9,.95,1.],
+            'lambda': [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,.85,.9,.95,1.],
             'nu': np.arange(.02,.8,.02)
         },
         'xs_all': np.arange(n).reshape( (n,1) )
@@ -84,7 +84,9 @@ def cross_validate_with_params( params ):
 
     axes_coord, name, kernel_params = params
 
+    lbda_set = False
     if 'lambda' in kernel_params:
+        lbda_set = True
         lbda = kernel_params['lambda']
         del kernel_params['lambda']
         mat = np.load( "./{}-ssk_{}.npy".format(name, lbda) )
@@ -94,6 +96,9 @@ def cross_validate_with_params( params ):
     scores = cross_validate(clf, xs_train, ys_train, cv=5)#, n_jobs=-1)
 
     clfmdl = clf.fit(xs_train, ys_train)
+
+    if lbda_set:
+        kernel_params['lambda'] = lbda
 
     for axis_k in axes_keys:
         print("{}: {:<9.3g}".format(axis_k, kernel_params[axis_k]), end=" ")
@@ -149,6 +154,10 @@ if __name__ == '__main__':
         pool = Pool(processes=10)
         grid_results = pool.map( cross_validate_with_params, kernels_params )
         cross_results = { kernels_params[i][0]:grid_results[i] for i in range(grid_size) }
+
+        #grid_results = []
+        #for p in kernels_params:
+        #    grid_results.append( cross_validate_with_params(p) )
 
         with open("cross_validation-{}.dat"
                   .format(params['preprocessing']), "wb") as f:

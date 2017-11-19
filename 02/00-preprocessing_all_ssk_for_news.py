@@ -57,6 +57,8 @@ class GrammMatrixCreator(object):
 
         #pool = Pool(processes=self.processes) # sadly, it doesn't work :(
         #pool.map( self.process_string_list(), xs_s )
+        from random import shuffle
+        shuffle(xs_s)
 
         for inp in xs_s:
             self.process_string_list()(inp)
@@ -64,11 +66,17 @@ class GrammMatrixCreator(object):
         print( "Finished computing 'dot product' (kernel application) between all pairs of news" )
 
     def process_string_list(self):
+        #from time import sleep
+        from random import random
         def to_ret( input_ ):
             (i, j, feats_l, feats_r) = input_
             name = self.news_ssk_dir+"/mat_{}_{}.npy".format(str(i).rjust(2,"0"), str(j).rjust(2,"0"))
+            #sleep( random()*20 ) # do this if you are running in parallel several objects with the same lambda
+                                  # (that is useful, if the calculations for one of the lambdas takes longer than all the others)
 
             if not path.isfile(name):
+                f = open(name, 'w')
+                f.close()
                 mat = string_kernel(feats_l, feats_r, self.substring_length, self.lbda)
                 np.save(name, mat)
 
@@ -202,8 +210,9 @@ if __name__ == '__main__':
         gramm_ssk = GrammMatrixCreator(news_list, partition_size, name=name, lbda=lbda, into_rows=into_rows)
         gramm_ssk.computeGramm()
 
+    #to_process  = [(lbda, news,             "news")             for lbda in [.1,.1,.1,.1,.1,.1,.1,.2,.2,.2,.2,.2,.3,.3,.3,.3,.3]] # running multiple copies concurrently, some lambdas take longer than others
     to_process  = [(lbda, news,             "news")             for lbda in [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.0]]
-    to_process += [(lbda, news_as_intlists, "news_as_intlists") for lbda in [.5,.55,.6,.65,.7,.75,.8,.85,.9,.95,1.]]
+    to_process += [(lbda, news_as_intlists, "news_as_intlists") for lbda in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,.85,.9,.95,1.]]
 
     pool = Pool(processes=10)
     pool.map( computeNSaveSSK, to_process )
