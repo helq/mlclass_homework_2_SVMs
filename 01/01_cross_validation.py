@@ -17,10 +17,10 @@ test_size = 300
 
 ## preprocessing
 ### KPCA
-#kpca = KernelPCA(kernel="poly", gamma=2.2, degree=2, fit_inverse_transform=True, max_iter=1000000)
-#xs_train_, xs_test_, ys_train_, ys_test_ = train_test_split(xs_all_, ys_all_, test_size=test_size, random_state=123)
-#xs_train_kpca = kpca.fit_transform(xs_train_)
-#xs_test_kpca = kpca.transform(xs_test_)
+kpca = KernelPCA(kernel="poly", gamma=2.2, degree=2, fit_inverse_transform=True, max_iter=1000000)
+xs_train_, xs_test_, ys_train_, ys_test_ = train_test_split(xs_all_, ys_all_, test_size=test_size, random_state=123)
+xs_train_kpca = kpca.fit_transform(xs_train_)
+xs_test_kpca = kpca.transform(xs_test_)
 
 ## Autoencoder
 xs_all_autoencoder = np.array( [[float(xi) for xi in x.split()] for x in open("xtrain_encoded.txt").readlines()] )
@@ -239,7 +239,7 @@ if __name__ == '__main__':
         grid_results = pool.map( cross_validate_with_params, kernels_params )
         cross_results = { kernels_params[i][0]:grid_results[i] for i in range(grid_size) }
 
-        with open("cross_validation-{}-{}.dat"
+        with open("cross_validation/cross_validation-{}-{}.dat"
                   .format(params['kernel_params']['kernel'], params['preprocessing']), "wb") as f:
             pickle.dump( tuple(axes_keys), f )
             pickle.dump( cross_results, f )
