@@ -12,8 +12,7 @@ ys_all = np.array( [int(float(y)) for y in open("ytrain.txt").readlines()] )
 
 test_size = 300
 
-xs_train, xs_test, ys_train, ys_test = \
-        train_test_split(xs_all_, ys_all, test_size=test_size, random_state=123)
+xs_train, xs_test = train_test_split(xs_all_, test_size=test_size, random_state=123)
 
 def tryKPCA(pms):
     g, d = pms

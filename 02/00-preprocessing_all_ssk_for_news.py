@@ -178,6 +178,7 @@ if __name__ == '__main__':
 
     import nltk
     import array
+    nltk.data.path.insert(0, './nltk_data')
     #nltk.download("punkt")
     #nltk.download("wordnet")
     #not yet nltk.download("averaged_perceptron_tagger")

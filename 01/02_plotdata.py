@@ -5,14 +5,14 @@ from matplotlib import cm
 import numpy as np
 import pickle
 
-#measure = "Accuracy"
+measure = "Accuracy"
 #measure = "# Support Vectors"
 #measure = "Accuracy standard dev"
-measure = "Accuracy on training"
+#measure = "Accuracy on training"
 
-dist = 1
+dist = 3
 
-with open("./cross_validation-poly-kernelPCA_gamma1_poly1.dat", "rb") as f:
+with open("./cross_validation-poly-autoencoder.dat", "rb") as f:
     axes_keys = pickle.load(f)
     #axes_keys = ('nu', 'gamma')
     cross_results = pickle.load(f)
