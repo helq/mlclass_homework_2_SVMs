@@ -5,6 +5,7 @@ from matplotlib import cm
 import numpy as np
 import pickle
 from collections import namedtuple
+import os
 
 PlotData = namedtuple('PlotData', ['axes_keys', 'shape', 'n_nus', 'n_gammas', 'nus', 'gammas', 'gammas_labels', 'cross_results', 'gammas_idx'])
 
@@ -39,11 +40,10 @@ def accuracy(data, ax):
         for j in range(data.n_nus):
             scores[i,j] = data.cross_results[(data.nus[i,j], data.gammas[i,j])][0]['test_score'].mean()
 
-    #idx = scores.argmax()
-    #(i,j) = (int(idx/n_nus), idx%n_nus)
-    #maxPoint = ax.scatter( gammas_idx[i,j], nus[i,j], scores[i,j]+.02 , zorder=1)
+    #idx = np.unravel_index( scores.argmax(), scores.shape )
+    #maxPoint = ax.scatter( data.gammas_idx[idx], data.nus[idx], scores[idx]+.02 , zorder=1)
     surf = ax.plot_surface(data.gammas_idx, data.nus, scores, cmap=cm.coolwarm, linewidth=0, antialiased=False)#, zorder=2)
-    return surf
+    return surf, scores
 
 def support_vectors(data, ax):
     svs = np.zeros( data.shape, dtype='int64' )
@@ -52,7 +52,7 @@ def support_vectors(data, ax):
             svs[i,j] = data.cross_results[(data.nus[i,j], data.gammas[i,j])][1]
 
     surf = ax.plot_surface(data.gammas_idx, data.nus, svs, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    return surf
+    return surf, svs
 
 def accuracy_std(data, ax):
     devs = np.zeros( data.shape )
@@ -61,7 +61,7 @@ def accuracy_std(data, ax):
             devs[i,j] = data.cross_results[(data.nus[i,j], data.gammas[i,j])][0]['test_score'].std()
 
     surf = ax.plot_surface(data.gammas_idx, data.nus, devs, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    return surf
+    return surf, devs
 
 def accuracy_training(data, ax):
     scores_train = np.zeros( data.shape )
@@ -70,7 +70,7 @@ def accuracy_training(data, ax):
             scores_train[i,j] = data.cross_results[(data.nus[i,j], data.gammas[i,j])][0]['train_score'].mean()
 
     surf = ax.plot_surface(data.gammas_idx, data.nus, scores_train, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    return surf
+    return surf, scores_train
 
 measures = {
     "accuracy":          "Accuracy",
@@ -86,11 +86,14 @@ create_surfaces = {
     "accuracy_training": accuracy_training
 }
 
-def plotfigure(data, measure, name=None, dist=1):
-    fig = plt.figure()
+def plotfigure(data, measure, name=None, dist=1, force_save=False):
+    #fig = plt.figure(figsize=(9,5), tight_layout=True)
+    fig = plt.figure(0, figsize=(7,4), tight_layout=True)
+    fig.clf() # cleaning current figure, so we don't use a lot of memory without any reason
+
     ax = fig.gca(projection='3d')
 
-    surf = create_surfaces[measure](data, ax)
+    surf, scores = create_surfaces[measure](data, ax)
 
     # Adjusting log scale and ticks for plot
     #ax.set_zlim(.3, 1)
@@ -107,11 +110,16 @@ def plotfigure(data, measure, name=None, dist=1):
     else:
         path = "{}_{}.svg".format(name, measure)
 
-        print('Saving "{}"'.format(path))
-        plt.savefig(path, transparent=True)
+        if not os.path.isfile(path) or force_save:
+            print('Saving "{}"'.format(path))
+            plt.savefig(path, transparent=True)
 
-        print('Postprocessing "{}"'.format(path))
-        post_processing(path)
+            print('Postprocessing "{}"'.format(path))
+            post_processing(path)
+        else:
+            print('Plot "{}" is already saved'.format(path))
+
+    return scores
 
 def post_processing(path):
     svg = open(path, 'r').readlines()
@@ -131,37 +139,52 @@ def post_processing(path):
         FNULL = open(os.devnull, 'w')
 
         print('Trimming image with Inkscape ...', end=" ", flush=True)
-        inkscape = Popen(['inkscape', '--verb=FitCanvasToDrawing', '--verb=FileSave', '--verb=FileQuit', path], stdout=FNULL, stderr=FNULL)
+        to_exec = ['inkscape', '--verb=FitCanvasToDrawing', '--verb=FileSave', '--verb=FileQuit', path]
+        print(' {}'.format(to_exec), end=" ", flush=True)
+        inkscape = Popen(to_exec, stdout=FNULL, stderr=FNULL)
+        inkscape.wait()
+        print('done')
+
+        print('Converting image to pdf with Inkscape ...', end=" ", flush=True)
+        to_exec = ['inkscape', '--without-gui', '--export-pdf={}.pdf'.format(os.path.splitext(path)[0]), path]
+        print(' {}'.format(to_exec), end=" ", flush=True)
+        inkscape = Popen(to_exec, stdout=FNULL, stderr=FNULL)
         inkscape.wait()
         print('done')
     else:
         print("Inkscape is not installed, no further post-processing can be done")
 
-plots_params = [
-#    {
-#        'name': '01/plots/poly-no-preprocessing',
-#        'path': '01/cross_validation/cross_validation-poly-no-preprocessing.dat',
-#        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-#        'dist': 1
-#    },
-#    {
-#        'name': '01/plots/poly-scaling',
-#        'path': '01/cross_validation/cross_validation-poly-scaling.dat',
-#        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-#        'dist': 1
-#    },
-    {
-        #'name': '01/plots/poly-robust-scaling',
-        'path': '01/cross_validation/cross_validation-poly-robust-scaling.dat',
+plots_params = []
+for name_proc in ['poly-no-preprocessing', 'poly-scaling', 'poly-robust-scaling', 'poly-normalization', 'poly-autoencoder', 'poly-kernelPCA_gamma2.2_poly2']:
+    plots_params.append({
+        'name': '01/plots/{}'.format(name_proc),
+        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
         'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-        'dist': 1
-    },
-]
+        'dist': 1,
+        #'force_save': True
+    })
+for name_proc in ['rbf-no-preprocessing',  'rbf-scaling',  'rbf-robust-scaling',  'rbf-normalization', 'rbf-autoencoder',  'rbf-kernelPCA_gamma2.2_poly2']:
+    plots_params.append({
+        'name': '01/plots/{}'.format(name_proc),
+        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
+        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        'dist': 4,
+        #'force_save': True
+    })
+for name_proc in ['no-preprocessing', 'tokenized_leximized']:
+    plots_params.append({
+        'name': '02/plots/{}'.format(name_proc),
+        'path': '02/cross_validation-{}.dat'.format(name_proc),
+        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        'dist': 5,
+        #'force_save': True
+    })
 
 if __name__ == '__main__':
     # showing each plot individualy
     for pparams in plots_params:
         data = load_data( pparams['path'] )
+        path = pparams['path']
         del pparams['path']
 
         for measure in pparams['measures']:
@@ -169,4 +192,9 @@ if __name__ == '__main__':
             del params['measures']
             params['measure'] = measure
 
-            plotfigure(data, **params)
+            scores = plotfigure(data, **params)
+
+            print( 'Crossvalidation file: "{}"'.format( path ) )
+            print( " Max value: {}".format(scores.max()) )
+            (i,j) = np.unravel_index( scores.argmax(), scores.shape )
+            print(" Axis values for max value {}: ({:.3g}, {:.3g})".format( data.axes_keys, data.nus[0,j], data.gammas_labels[i] ) )

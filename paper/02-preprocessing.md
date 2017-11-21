@@ -33,12 +33,14 @@ I tried several different preprocessing strategies. All of the results by using 
 them can be seen in \ref{training}. The preprocessing steps that I tried for this problem
 were:
 
-1. No preprocessing, the raw data was used directly in the models
-2. Scaling and Centering of the data
-3. Normalizing (scaling each datapoint to the unit length)
+1. No preprocessing, the raw data was used directly in the models.
+2. Scaling and Centering of the data.
+3. Normalizing (scaling each datapoint to the unit length).
 4. Robust scaling and centering (evading outlier \todo{search in the web page of
-   scikit-learn what precisely is done in robust scaling})
-5. Kernel PCA, using polynomial kernel with degree 2 and gamma of 2.2[^kpca]
+   scikit-learn what precisely is done in robust scaling}).
+5. Kernel PCA, using polynomial kernel with degree 2 and gamma of 2.2[^kpca].
+6. Autoencoder, an arbitrary neural net that has (hopefully) the ability to reduce the
+   dimensionality of the data from 15 features to 10.
 
 [^kpca]: this parameters were selected by doing a grid search, the results can be seen in
   \inlinetodo{add figures showing results of grid search for kernel pca}. The parameters

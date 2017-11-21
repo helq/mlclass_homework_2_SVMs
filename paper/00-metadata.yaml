@@ -27,6 +27,10 @@ author:
 abstract: |
   \inlinetodo{FINISH ME!}
 
+#geometry: # regular letter size is 215.9 wide by 279.44 long
+#  - "paperwidth=275.9mm"
+#  - "paperheight=279.4mm"
+
 ...
 
 <!-- vim:set filetype=markdown.pandoc : -->
