@@ -109,7 +109,7 @@ def plot_3d_figure(data, measure, name=None, dist=1, force_save=False):
 
     return scores
 
-def plot_2d_figure_accuracy_errorbar(data, gamma_i, name=None, testing_set='test', force_save=False):
+def plot_2d_figure_accuracy_errorbar(data, gamma_i, name=None, measure="Accuracy", testing_set='test', force_save=False):
     """testing_set can either be 'test' or 'train'"""
     i = gamma_i
     scores = np.zeros( data.n_nus )
@@ -192,45 +192,48 @@ def post_processing(path):
         print("Inkscape is not installed, no further post-processing can be done")
 
 plots_params = []
-for name_proc in ['poly-no-preprocessing', 'poly-scaling', 'poly-robust-scaling', 'poly-normalization', 'poly-autoencoder', 'poly-kernelPCA_gamma2.2_poly2']:
+#for name_proc in ['poly-no-preprocessing', 'poly-scaling', 'poly-robust-scaling', 'poly-normalization', 'poly-autoencoder', 'poly-kernelPCA_gamma2.2_poly2']:
+#    plots_params.append({
+#        'name': '01/plots/{}'.format(name_proc),
+#        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
+#        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+#        'dist': 1,
+#        #'force_save': True
+#    })
+for name_proc in ['rbf-autoencoder']:
+#for name_proc in ['rbf-no-preprocessing',  'rbf-scaling',  'rbf-robust-scaling',  'rbf-normalization', 'rbf-autoencoder',  'rbf-kernelPCA_gamma2.2_poly2']:
     plots_params.append({
-        'name': '01/plots/{}'.format(name_proc),
+        #'name': '01/plots/{}'.format(name_proc),
         'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
-        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        #'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        'measures': ['accuracy'],
         'dist': 1,
         #'force_save': True
     })
-for name_proc in ['rbf-no-preprocessing',  'rbf-scaling',  'rbf-robust-scaling',  'rbf-normalization', 'rbf-autoencoder',  'rbf-kernelPCA_gamma2.2_poly2']:
-    plots_params.append({
-        'name': '01/plots/{}'.format(name_proc),
-        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
-        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-        'dist': 4,
-        #'force_save': True
-    })
-for name_proc in ['no-preprocessing', 'tokenized_leximized']:
-    plots_params.append({
-        'name': '02/plots/{}'.format(name_proc),
-        'path': '02/cross_validation-{}.dat'.format(name_proc),
-        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-        'dist': 5
-    })
+#for name_proc in ['no-preprocessing', 'tokenized_leximized']:
+#    plots_params.append({
+#        'name': '02/plots/{}'.format(name_proc),
+#        'path': '02/cross_validation-{}.dat'.format(name_proc),
+#        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+#        'dist': 5
+#    })
 
 plots_2d_params = []
 for name_proc, i in [('poly-no-preprocessing', 1),
-                     ('poly-scaling', 0),
-                     ('poly-robust-scaling', 0),
-                     ('poly-normalization', 0),
-                     ('poly-autoencoder', 0),
+#                     ('poly-scaling', 0),
+#                     ('poly-robust-scaling', 0),
+                     ('poly-normalization', 2),
+#                     ('poly-autoencoder', 0),
                      ('poly-kernelPCA_gamma2.2_poly2', 0),
-                     ('rbf-no-preprocessing', 0),
-                     ('rbf-scaling', 0),
-                     ('rbf-robust-scaling', 0),
-                     ('rbf-normalization', 0),
-                     ('rbf-autoencoder', 0),
-                     ('rbf-kernelPCA_gamma2.2_poly2',0)]:
+#                     ('rbf-no-preprocessing', 0),
+#                     ('rbf-scaling', 0),
+#                     ('rbf-robust-scaling', 0),
+#                     ('rbf-normalization', 0),
+#                     ('rbf-autoencoder', 0),
+#                     ('rbf-kernelPCA_gamma2.2_poly2',0)
+                     ]:
     plots_2d_params.append({
-        #'name': '01/plots/{}'.format(name_proc),
+        'name': '01/plots/{}'.format(name_proc),
         'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
         'gamma_i': i,
         #'testing_set': 'test',
@@ -256,9 +259,9 @@ if __name__ == '__main__':
             (i,j) = np.unravel_index( scores.argmax(), scores.shape )
             print(" Axis values for max value {}: ({:.3g}, {:.3g})".format( data.axes_keys, data.nus[0,j], data.gammas_labels[i] ) )
 
-    for pparams in plots_2d_params:
-        data = load_data( pparams['path'] )
-        path = pparams['path']
-        del pparams['path']
+    #for pparams in plots_2d_params:
+    #    data = load_data( pparams['path'] )
+    #    path = pparams['path']
+    #    del pparams['path']
 
-        plot_2d_figure_accuracy_errorbar(data, **pparams)
+    #    plot_2d_figure_accuracy_errorbar(data, **pparams)

@@ -243,22 +243,3 @@ if __name__ == '__main__':
                   .format(params['kernel_params']['kernel'], params['preprocessing']), "wb") as f:
             pickle.dump( tuple(axes_keys), f )
             pickle.dump( cross_results, f )
-
-# Training
-#clf = svm.NuSVC(.2, kernel='rbf', verbose=True).fit(xs_train, ys_train)
-#clf.score(xs_train, ys_train) # score from trainig
-#clf.score(xs_test, ys_test)
-
-
-#nu = 0.32
-#gamma = 0.00463
-#
-#clf = svm.NuSVC(nu, kernel='rbf', gamma=gamma)
-#adaclf = AdaBoostClassifier(clf, algorithm='SAMME', learning_rate=.8)
-#adaclfmdl = adaclf.fit(xs_train, ys_train)
-#adaclfmdl.score(xs_train, ys_train)
-#adaclfmdl.score(xs_test, ys_test)
-#adaclfmdl.n_estimators
-#clfmdl = clf.fit( xs_train, ys_train )
-#clfmdl.score(xs_train, ys_train)
-#clfmdl.score(xs_test, ys_test)

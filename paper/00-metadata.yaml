@@ -24,8 +24,8 @@ author:
 #      location: Bogotá, Colombia
 #      email: \texttt{elacruzca@unal.edu.co}
 
-abstract: |
-  \inlinetodo{FINISH ME!}
+#abstract: |
+#  \inlinetodo{FINISH ME!}
 
 #geometry: # regular letter size is 215.9 wide by 279.44 long
 #  - "paperwidth=275.9mm"

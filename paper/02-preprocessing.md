@@ -35,12 +35,13 @@ were:
 
 1. No preprocessing, the raw data was used directly in the models.
 2. Scaling and Centering of the data.
-3. Normalizing (scaling each datapoint to the unit length).
-4. Robust scaling and centering (evading outlier \todo{search in the web page of
+3. Robust scaling and centering (evading outlier \todo{search in the web page of
    scikit-learn what precisely is done in robust scaling}).
+4. Normalizing (scaling each datapoint to the unit length).
 5. Kernel PCA, using polynomial kernel with degree 2 and gamma of 2.2[^kpca].
 6. Autoencoder, an arbitrary neural net that has (hopefully) the ability to reduce the
-   dimensionality of the data from 15 features to 10.
+   dimensionality of the data from 15 features to 10.\todo{write in detail the net I used,
+   and why I selected it}
 
 [^kpca]: this parameters were selected by doing a grid search, the results can be seen in
   \inlinetodo{add figures showing results of grid search for kernel pca}. The parameters
