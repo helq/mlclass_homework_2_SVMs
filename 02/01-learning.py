@@ -44,7 +44,7 @@ test_size = 1640 # makes possible to partition the set in six almost equal parts
 
 def ssk_from_indices_from_mat(mat):
     def ssk_from_indices( indices_l, indices_r ):
-        """Uses a global variable, mat"""
+        """Uses a non_local variable, mat"""
         return mat[ [[int(il)] for il in indices_l], [int(ir) for ir in indices_r] ]
     return ssk_from_indices
 

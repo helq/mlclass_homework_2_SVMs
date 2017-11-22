@@ -1,6 +1,6 @@
 # Preprocessing #
 
-\subsection{First Problem}
+## First Problem ##
 
 The first dataset has a total of 2000 datapoints with 15 features (each feature is an
 integer between 0 and 20 (inclusive)). The dataset is balanced, with 1049 datapoints
@@ -50,7 +50,7 @@ were:
 
 \missingfigure{figures of grid search for kpca}
 
-\subsection{Second Problem}
+## Second Problem ##
 
 This dataset consists of 32603 datapoints. Each datapoint consists of a sequences of
 characters forming a text in English. Each datapoint is labeled with one of the following

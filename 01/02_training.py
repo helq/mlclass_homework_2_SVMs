@@ -1,6 +1,7 @@
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn import svm
+#from sklearn.ensemble import AdaBoostClassifier
 
 import numpy as np
 
@@ -12,11 +13,12 @@ xs_all = preprocessing.normalize(xs_all_, norm='l2')
 ys_all = np.array( [int(float(y)) for y in open("ytrain.txt").readlines()] )
 
 xs_train, xs_test, ys_train, ys_test = \
-   train_test_split(xs_all, ys_all, test_size=test_size, random_state=245)
+   train_test_split(xs_all, ys_all, test_size=test_size, random_state=123)
 
 clf = svm.NuSVC(.62, degree=3, kernel='poly', gamma=1).fit(xs_train, ys_train)
 #clf.score(xs_train, ys_train) # score from trainig
-print("Training accuracy for poly kernel: {:.3g}".format(clf.score(xs_test, ys_test)))
+print("Testing accuracy for poly kernel: {:.5g}".format(clf.score(xs_test, ys_test)))
+clf = svm.NuSVC(.62, degree=3, kernel='poly', gamma=1).fit(xs_all, ys_all)
 
 xs_to_label_ = np.array( [[float(xi) for xi in x.split()] for x in open("xtest.txt").readlines()] )
 xs_to_label = preprocessing.normalize(xs_to_label_, norm='l2')
@@ -30,11 +32,12 @@ xs_all = np.array( [[float(xi) for xi in x.split()] for x in open("xtrain.txt").
 ys_all = np.array( [int(float(y)) for y in open("ytrain.txt").readlines()] )
 
 xs_train, xs_test, ys_train, ys_test = \
-   train_test_split(xs_all, ys_all, test_size=test_size, random_state=245)
+   train_test_split(xs_all, ys_all, test_size=test_size, random_state=123)
 
 clf = svm.NuSVC(.52, kernel='rbf', gamma=1.3e-5).fit(xs_train, ys_train)
 #clf.score(xs_train, ys_train) # score from trainig
-print("Training accuracy for rbf kernel: {:.3g}".format(clf.score(xs_test, ys_test)))
+print("Testing accuracy for rbf kernel: {:.5g}".format(clf.score(xs_test, ys_test)))
+clf = svm.NuSVC(.52, kernel='rbf', gamma=1.3e-5).fit(xs_all, ys_all)
 
 xs_to_label = np.array( [[float(xi) for xi in x.split()] for x in open("xtest.txt").readlines()] )
 ys_labeled = clf.predict( xs_to_label )
@@ -46,6 +49,7 @@ with open("ytest_rbf.txt", "w") as f:
 #gamma = 0.00463
 #
 #clf = svm.NuSVC(nu, kernel='rbf', gamma=gamma)
+#clf = svm.NuSVC(.52, kernel='rbf', gamma=1.3e-5)
 #adaclf = AdaBoostClassifier(clf, algorithm='SAMME', learning_rate=.8)
 #adaclfmdl = adaclf.fit(xs_train, ys_train)
 #adaclfmdl.score(xs_train, ys_train)

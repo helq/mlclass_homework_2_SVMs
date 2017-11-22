@@ -1,17 +1,20 @@
 # Models #
 
-\subsection{First problem}
+## First problem ##
 
 For the first problem, we should find the best parameters for a binary classificator
 $\nu$-SVM with two different kernels: polynomial and gaussian.
 
 I searched the spaces of (hyper-)parameters in grid fashion. In one axis, $\nu$ took the
-values $\nu \in \{.2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, 8\}$. For the
+values $\nu \in \{$ 0.02,  0.04,  0.06,  0.08,  0.1 ,  0.12,  0.14,  0.16,  0.18, 0.2 ,
+0.22,  0.24,  0.26,  0.28,  0.3 ,  0.32,  0.34,  0.36, 0.38,  0.4 ,  0.42,  0.44,  0.46,
+0.48,  0.5 ,  0.52,  0.54, 0.56,  0.58,  0.6 ,  0.62,  0.64,  0.66,  0.68,  0.7 ,  0.72,
+0.74,  0.76,  0.78 $\}$. For the
 polynomial kernel, the $degree$ paramater took the values $\{1, 2, 3, 4, 5, 6, 7\}$. And,
 for the gaussian kernel, the $\gamma$ parameter took different range values depending on
 the preprocessing the data passed through.
 
-\subsubsection{Grid search and model selected for polynomial kernel}
+### Grid search and model selected for polynomial kernel ###
 
 Remember from section \ref{preprocessing} (preprocessing), I tested 6 different
 preprocessing strategies, below I present the analysis of each one of their results (using
@@ -115,7 +118,7 @@ the grid search):
 The model selected with polynomial kernel is $\nu = 0.62$ and $degree = 3$ with a
 preprocessing step of normalization.
 
-\subsubsection{Grid search and model selected for gaussian kernel}
+### Grid search and model selected for gaussian kernel ###
 
 Below I present the analysis of the different preprocessing strategies in the search of
 the best classification:
@@ -212,8 +215,53 @@ the best classification:
 The model selected with polynomial kernel is $\nu = 0.52$ and $\gamma = 1.30 \times
 10^{-5}$ with no preprocessing.
 
-\subsection{Second Problem}
+## Second Problem ##
 
-\inlinetodo{something to add here}
+As explained in subsection~\ref{second-problem} (Preprocessing / Second Problem), I
+selected two preprocessing procedures. For each one of them I search in a grid fashion to
+find the best parameters, $\nu$ and $\lambda$ for the problem[^preprocessing_footnote].
+
+[^preprocessing_footnote]: Once I had computed all Gramm matrices for each $\lambda = \{$
+  0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 $\}$, I just computed the resulting
+  models of traninig SVMs on several different $\nu$ values.
+
+The results of training the SVMs by preprocessing strategy:
+
+\begin{itemize}
+  \item[No preprocessing:] Figure~\ref{no-preprocessing_accuracy} shows the mean
+  validation accuracy in the grid search. The highest accuracy value in the search
+  corresponds to $89.73\%$ with the parameters $\nu = 0.26$ and $\lambda = 0.6$.
+
+  The standard deviation for each 5-fold crossvalidation is very low, less than $1\%$, as
+  it can be seen in Figure~\ref{no-preprocessing_accuracy_std}. As with the first problem,
+  low values of $\nu$ and $\lambda$ makes for a not so good resulting model.
+
+%  The number of support vectors increases as the value of $\lambda$ does, see
+%  Figure~\ref{no-preprocessing_support_vectors}.
+
+  \item[Tokenizing:] Figure~\ref{tokenized_leximized_accuracy} shows the mean
+  validation accuracy in the grid search. The highest accuracy value in the search
+  corresponds to $91.20\%$ with the parameters $\nu = 0.2$ and $\lambda = 0.55$. The
+  behaivor of lists of tokens (one per word) is radically different to the behaivor of
+  lists of characters, but their computation times are the same once the kernels have been
+  computed.
+
+  The standard deviation for each 5-fold crossvalidation is very-very low, less than
+  $0.25\%$! see Figure~\ref{tokenized_leximized_accuracy_std}. The standard deviation with
+  this preprocessing beats applying no preprocessing at all, this preprocessing procedure
+  seems to be superior.
+\end{itemize}
+
+![Validation accuracy in a grid search in the two dimensional spaces of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. Preprocessing step: No preprocessing \label{no-preprocessing_accuracy}](imgs/no-preprocessing_accuracy.pdf)
+
+![Standard deviation of validation accuracy (using 5-fold crossvalidation) in a grid search in the two dimensional space of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. \label{no-preprocessing_accuracy_std}](imgs/no-preprocessing_accuracy_std.pdf)
+
+<!--
+   -![Number of support vectors for values of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. \label{no-preprocessing_support_vectors}](imgs/no-preprocessing_support_vectors.pdf)
+   -->
+
+![Validation accuracy in a grid search in the two dimensional spaces of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. Preprocessing step: Tokenized and Leximized \label{tokenized_leximized_accuracy}](imgs/tokenized_leximized_accuracy.pdf)
+
+![Standard deviation of validation accuracy (using 5-fold crossvalidation) in a grid search in the two dimensional space of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. \label{tokenized_leximized_accuracy_std}](imgs/tokenized_leximized_accuracy_std.pdf)
 
 <!-- vim:set filetype=markdown.pandoc : -->
