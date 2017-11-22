@@ -86,7 +86,7 @@ create_surfaces = {
     "accuracy_training": accuracy_training
 }
 
-def plotfigure(data, measure, name=None, dist=1, force_save=False):
+def plot_3d_figure(data, measure, name=None, dist=1, force_save=False):
     #fig = plt.figure(figsize=(9,5), tight_layout=True)
     fig = plt.figure(0, figsize=(7,4), tight_layout=True)
     fig.clf() # cleaning current figure, so we don't use a lot of memory without any reason
@@ -105,6 +105,36 @@ def plotfigure(data, measure, name=None, dist=1, force_save=False):
     ax.set_zlabel(measures[measure])
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt_show(name, measure)
+
+    return scores
+
+def plot_2d_figure_accuracy_errorbar(data, gamma_i, name=None, testing_set='test', force_save=False):
+    """testing_set can either be 'test' or 'train'"""
+    i = gamma_i
+    scores = np.zeros( data.n_nus )
+    devs = np.zeros( data.n_nus )
+    for j in range(data.n_nus):
+        scores[j] = data.cross_results[(data.nus[i,j], data.gammas[i,j])][0]['{}_score'.format(testing_set)].mean()
+        devs[j]   = data.cross_results[(data.nus[i,j], data.gammas[i,j])][0]['{}_score'.format(testing_set)].std()
+
+    fig = plt.figure(figsize=(7,4), tight_layout=True)
+    #fig = plt.figure(0, figsize=(7,4), tight_layout=True)
+    #fig.clf() # cleaning current figure, so we don't use a lot of memory without any reason
+
+    ax = fig.gca()
+    ax.errorbar(x=data.nus[0], y=scores, yerr=devs)
+
+    # plotting highest value
+    j = scores.argmax()
+    ax.scatter(data.nus[0,j], scores[j])
+
+    ax.set_xlabel(data.axes_keys[0])
+    ax.set_ylabel(measure)
+    plt_show(name, '{}-accuracy_errorbar'.format(testing_set), force_save)
+    return scores, devs
+
+def plt_show(name=None, measure=None, force_save=False):
     if name is None:
         plt.show()
     else:
@@ -119,17 +149,24 @@ def plotfigure(data, measure, name=None, dist=1, force_save=False):
         else:
             print('Plot "{}" is already saved'.format(path))
 
-    return scores
-
 def post_processing(path):
     svg = open(path, 'r').readlines()
-    if svg[11] == '  <g id="patch_1">\n' and svg[26] == '  </g>\n':
+    # Detecting transparent background and removing it (for 3d figures)
+    if     svg[11] == '  <g id="patch_1">\n' \
+       and svg[26] == '  </g>\n':
         print('Removing background image')
         with open(path, "w") as f:
             f.write( ''.join( svg[:11]+svg[27:] ) )
+    # Detecting transparent background and removing it (for 2d figures)
+    if     svg[11] == '  <g id="patch_1">\n' \
+       and svg[17] == '" style="fill:none;"/>\n' \
+       and svg[18] == '  </g>\n':
+        print('Removing background image')
+        with open(path, "w") as f:
+            f.write( ''.join( svg[:11]+svg[19:] ) )
+    # No transparent background could be found :S
     else:
-        print('No post_processing in svg file "{}" could be done :S'.format(path))
-        return
+        print('Uncomplete post processing of svg image "{}", it may not look as expected'.format(path))
 
     import distutils.spawn
 
@@ -176,7 +213,27 @@ for name_proc in ['no-preprocessing', 'tokenized_leximized']:
         'name': '02/plots/{}'.format(name_proc),
         'path': '02/cross_validation-{}.dat'.format(name_proc),
         'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-        'dist': 5,
+        'dist': 5
+    })
+
+plots_2d_params = []
+for name_proc, i in [('poly-no-preprocessing', 1),
+                     ('poly-scaling', 0),
+                     ('poly-robust-scaling', 0),
+                     ('poly-normalization', 0),
+                     ('poly-autoencoder', 0),
+                     ('poly-kernelPCA_gamma2.2_poly2', 0),
+                     ('rbf-no-preprocessing', 0),
+                     ('rbf-scaling', 0),
+                     ('rbf-robust-scaling', 0),
+                     ('rbf-normalization', 0),
+                     ('rbf-autoencoder', 0),
+                     ('rbf-kernelPCA_gamma2.2_poly2',0)]:
+    plots_2d_params.append({
+        #'name': '01/plots/{}'.format(name_proc),
+        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
+        'gamma_i': i,
+        #'testing_set': 'test',
         #'force_save': True
     })
 
@@ -192,9 +249,16 @@ if __name__ == '__main__':
             del params['measures']
             params['measure'] = measure
 
-            scores = plotfigure(data, **params)
+            scores = plot_3d_figure(data, **params)
 
             print( 'Crossvalidation file: "{}"'.format( path ) )
             print( " Max value: {}".format(scores.max()) )
             (i,j) = np.unravel_index( scores.argmax(), scores.shape )
             print(" Axis values for max value {}: ({:.3g}, {:.3g})".format( data.axes_keys, data.nus[0,j], data.gammas_labels[i] ) )
+
+    for pparams in plots_2d_params:
+        data = load_data( pparams['path'] )
+        path = pparams['path']
+        del pparams['path']
+
+        plot_2d_figure_accuracy_errorbar(data, **pparams)
