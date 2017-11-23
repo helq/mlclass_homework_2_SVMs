@@ -192,31 +192,30 @@ def post_processing(path):
         print("Inkscape is not installed, no further post-processing can be done")
 
 plots_params = []
-#for name_proc in ['poly-no-preprocessing', 'poly-scaling', 'poly-robust-scaling', 'poly-normalization', 'poly-autoencoder', 'poly-kernelPCA_gamma2.2_poly2']:
-#    plots_params.append({
-#        'name': '01/plots/{}'.format(name_proc),
-#        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
-#        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-#        'dist': 1,
-#        #'force_save': True
-#    })
-for name_proc in ['rbf-autoencoder']:
-#for name_proc in ['rbf-no-preprocessing',  'rbf-scaling',  'rbf-robust-scaling',  'rbf-normalization', 'rbf-autoencoder',  'rbf-kernelPCA_gamma2.2_poly2']:
+for name_proc in ['poly-no-preprocessing', 'poly-scaling', 'poly-robust-scaling', 'poly-normalization', 'poly-autoencoder', 'poly-kernelPCA_gamma2.2_poly2']:
     plots_params.append({
-        #'name': '01/plots/{}'.format(name_proc),
+        'name': '01/plots/{}'.format(name_proc),
         'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
-        #'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        'dist': 1,
+        #'force_save': True
+    })
+for name_proc in ['rbf-no-preprocessing',  'rbf-scaling',  'rbf-robust-scaling',  'rbf-normalization', 'rbf-autoencoder',  'rbf-kernelPCA_gamma2.2_poly2']:
+    plots_params.append({
+        'name': '01/plots/{}'.format(name_proc),
+        'path': '01/cross_validation/cross_validation-{}.dat'.format(name_proc),
+        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
         'measures': ['accuracy'],
         'dist': 1,
         #'force_save': True
     })
-#for name_proc in ['no-preprocessing', 'tokenized_leximized']:
-#    plots_params.append({
-#        'name': '02/plots/{}'.format(name_proc),
-#        'path': '02/cross_validation-{}.dat'.format(name_proc),
-#        'measures': ['accuracy', 'support_vectors', 'accuracy_std', 'accuracy_training'],
-#        'dist': 5
-#    })
+for name_proc in ['no-preprocessing', 'tokenized_leximized']:
+    plots_params.append({
+        'name': '02/plots/{}'.format(name_proc),
+        'path': '02/cross_validation-{}.dat'.format(name_proc),
+        'measures': ['accuracy'],#, 'support_vectors', 'accuracy_std', 'accuracy_training'],
+        'dist': 5
+    })
 
 plots_2d_params = []
 for name_proc, i in [('poly-no-preprocessing', 1),
@@ -259,9 +258,9 @@ if __name__ == '__main__':
             (i,j) = np.unravel_index( scores.argmax(), scores.shape )
             print(" Axis values for max value {}: ({:.3g}, {:.3g})".format( data.axes_keys, data.nus[0,j], data.gammas_labels[i] ) )
 
-    #for pparams in plots_2d_params:
-    #    data = load_data( pparams['path'] )
-    #    path = pparams['path']
-    #    del pparams['path']
+    for pparams in plots_2d_params:
+        data = load_data( pparams['path'] )
+        path = pparams['path']
+        del pparams['path']
 
-    #    plot_2d_figure_accuracy_errorbar(data, **pparams)
+        plot_2d_figure_accuracy_errorbar(data, **pparams)

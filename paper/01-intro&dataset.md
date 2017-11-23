@@ -26,10 +26,10 @@ the data. A total of 9920 datapoints are given for the task.
 For both problems, any preprocessing of the data is allowed.
 
 The code implementing the training procedures, postprocessing and graphic analysis can be
-found in <https://github.com/helq/mlclass_homework_2_SVMs>.
+found in <https://github.com/helq/mlclass_homework_2_SVMs>. I also implemented in
+Cython[^cython] the fast-SSK procedure presented in @lodhi2002text.
 
-\inlinetodo{explain that I've implemented the string kernel procedure in Cython because
-the one from shogun was a little wacky to use, but I actually took some inspiration from
-it}
+[^cython]: Cython is python with C-like characteristics and the code gets compiled not
+  interpreted.
 
 <!-- vim:set filetype=markdown.pandoc : -->

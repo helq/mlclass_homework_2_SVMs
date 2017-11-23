@@ -1,10 +1,10 @@
 # Optimization/Training Algorithm #
 
-I used the python library "scikit-learn".\todo{search how to properly cite the lib}
-The library offers an simple interface for SVM training and inference, unfortunately the
-types of kernels are restricted to a couple, including polynomial and gaussian (RBF), but
-no string subsequence kernel (SSK). I implemented the procedure to calculate the SSK, and
-used it with "scikit-learn".
+I used the python library "scikit-learn" [@scikit-learn]. The library offers an simple
+interface for SVM training and inference, unfortunately the types of kernels are
+restricted to a couple, including polynomial and gaussian (RBF), but no string subsequence
+kernel (SSK). I implemented the procedure to calculate the SSK, and used it with
+"scikit-learn".
 
 $\nu$-SVM was the version of SVM that I selected to solve the problem. It is easier to
 think about a parameter $\nu$ restricted to $[0,1)$ than a parameter $C$ with only a

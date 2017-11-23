@@ -8,7 +8,7 @@ MD_FILES = FileList.new('00-metadata.yaml', '??-*.md')
 BIB_LIB = 'bib.bib'
 #CSL = 'CSL/chicago-author-date.csl'
 TEX_HEADER='00-header.tex'
-#CITEPROC_PREAMBLE='99-references-preamble.tex'
+CITEPROC_PREAMBLE='99-references-preamble.tex'
 #PANDOC_TEMPLATE = 'pandoc_templates/ieee-pandoc-template/template.latex'
 CONFIG_FILES = FileList[TEX_HEADER, BIB_LIB] #, CSL, PANDOC_HEADER, PANDOC_TEMPLATE]
 
@@ -19,10 +19,10 @@ pandoc_comm = (
   " --latex-engine lualatex" +
   " -H #{TEX_HEADER}" +
   #" --biblatex" +
-  #" --bibliography '#{BIB_LIB}'" +
-  #" -M citeproc-preamble=#{CITEPROC_PREAMBLE}" +
-  #" --filter pandoc-citeproc" +
-  #" --filter pandoc-citeproc-preamble" +
+  " --filter pandoc-citeproc" +
+  " --filter pandoc-citeproc-preamble" +
+  " --bibliography '#{BIB_LIB}'" +
+  " -M citeproc-preamble=#{CITEPROC_PREAMBLE}" +
   #" --csl '#{CSL}'" +
   #" --template '#{PANDOC_TEMPLATE}'" +
   " -f markdown" +

@@ -2,7 +2,7 @@
 
 ## Paper ##
 
-An explanation of what is the code of this repo for.
+An explanation of what is the code of this repo for ([pdf here](./paper/ml_hw2.pdf)).
 
 TL;DR: A solution on two binary classification problems using SVMs with Polinomial,
 Gaussian (RBF), and String Subsequence Kernels.

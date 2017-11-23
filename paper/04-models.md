@@ -232,7 +232,7 @@ The results of training the SVMs by preprocessing strategy:
   validation accuracy in the grid search. The highest accuracy value in the search
   corresponds to $89.73\%$ with the parameters $\nu = 0.26$ and $\lambda = 0.6$.
 
-  The standard deviation for each 5-fold crossvalidation is very low, less than $1\%$, as
+  The standard deviation for each 5-fold crossvalidation is very low, less than $0.5\%$, as
   it can be seen in Figure~\ref{no-preprocessing_accuracy_std}. As with the first problem,
   low values of $\nu$ and $\lambda$ makes for a not so good resulting model.
 
@@ -263,5 +263,8 @@ The results of training the SVMs by preprocessing strategy:
 ![Validation accuracy in a grid search in the two dimensional spaces of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. Preprocessing step: Tokenized and Leximized \label{tokenized_leximized_accuracy}](imgs/tokenized_leximized_accuracy.pdf)
 
 ![Standard deviation of validation accuracy (using 5-fold crossvalidation) in a grid search in the two dimensional space of $\nu \in [0.02,0,8]$ and $\lambda \in [0.1, 1.0]$. \label{tokenized_leximized_accuracy_std}](imgs/tokenized_leximized_accuracy_std.pdf)
+
+The model selected corresponds to the one obtained applying $\nu = 0.2$ and
+$\lambda = 0.55$ with Tokenizing and Lemmatizing as preprocessing.
 
 <!-- vim:set filetype=markdown.pandoc : -->
